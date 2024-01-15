@@ -4,6 +4,11 @@ local WorldPickups = {}
 local dropAll = false
 local lastCoords = {}
 
+Citizen.CreateThread(function()
+	RequestAnimDict('amb_work@world_human_crouch_inspect@male_c@base') -- CARREGAR ANIMAÇÃO DE PICKUP (MALE)
+	RequestAnimDict('amb_work@world_human_crouch_inspect@female_a@base') -- CARREGAR ANIMAÇÃO DE PICKUP (FEMALE)
+end)
+
 PickupsService.CreateObject = function(model, position)
 	local objectHash = joaat(model)
 
@@ -22,7 +27,7 @@ PickupsService.CreateObject = function(model, position)
 	Citizen.InvokeNative(0x58A850EAEE20FAA3, entityHandle)           -- PlaceObjectOnGroundProperly
 	Citizen.InvokeNative(0xDC19C288082E586E, entityHandle, true, false) -- SetEntityAsMissionEntity
 	Citizen.InvokeNative(0x7D9EFB7AD6B19754, entityHandle, true)     -- FreezeEntityPosition
-	Citizen.InvokeNative(0x7DFB49BCDB73089A, entityHandle, true)     -- SetPickupLight
+	Citizen.InvokeNative(0x7DFB49BCDB73089A, entityHandle, false)    -- SetPickupLight
 	Citizen.InvokeNative(0xF66F820909453B8C, entityHandle, false, true) -- SetEntityCollision
 	SetModelAsNoLongerNeeded(objectHash)
 
@@ -33,8 +38,8 @@ PickupsService.createPickup = function(name, amount, metadata, weaponId, id)
 	local playerPed = PlayerPedId()
 	local coords = GetEntityCoords(playerPed, true, true)
 	local forward = GetEntityForwardVector(playerPed)
-	local position = vector3(coords.x + forward.x * 1.6, coords.y + forward.y * 1.6, coords.z + forward.z * 1.6)
-	local pickupModel = "P_COTTONBOX01X"
+	local position = vector3(coords.x, coords.y, coords.z + forward.z * 1.6)
+	local pickupModel = 'p_rockbag01x_close'
 
 	if dropAll then
 		local randomOffsetX = math.random(-35, 35)
@@ -54,11 +59,11 @@ PickupsService.createPickup = function(name, amount, metadata, weaponId, id)
 		id = id,
 	}
 	if weaponId == 1 then
-		TriggerServerEvent("vorpinventory:sharePickupServerItem", data)
+		TriggerServerEvent('vorpinventory:sharePickupServerItem', data)
 	else
-		TriggerServerEvent("vorpinventory:sharePickupServerWeapon", data)
+		TriggerServerEvent('vorpinventory:sharePickupServerWeapon', data)
 	end
-	PlaySoundFrontend("show_info", "Study_Sounds", true, 0)
+	-- PlaySoundFrontend("show_info", "Study_Sounds", true, 0)
 end
 
 PickupsService.createMoneyPickup = function(amount)
@@ -66,7 +71,7 @@ PickupsService.createMoneyPickup = function(amount)
 	local coords = GetEntityCoords(playerPed, true, true)
 	local forward = GetEntityForwardVector(playerPed)
 	local position = vector3(coords.x + forward.x * 1.6, coords.y + forward.y * 1.6, coords.z + forward.z * 1.6)
-	local pickupModel = "p_moneybag02x"
+	local pickupModel = 'p_moneybag02x'
 
 	if dropAll then
 		local randomOffsetX = math.random(-35, 35)
@@ -77,8 +82,8 @@ PickupsService.createMoneyPickup = function(amount)
 
 	local entityHandle = PickupsService.CreateObject(pickupModel, position)
 
-	TriggerServerEvent("vorpinventory:shareMoneyPickupServer", entityHandle, amount, position)
-	PlaySoundFrontend("show_info", "Study_Sounds", true, 0)
+	TriggerServerEvent('vorpinventory:shareMoneyPickupServer', entityHandle, amount, position)
+	PlaySoundFrontend('show_info', 'Study_Sounds', true, 0)
 end
 
 PickupsService.createGoldPickup = function(amount)
@@ -90,7 +95,7 @@ PickupsService.createGoldPickup = function(amount)
 	local coords = GetEntityCoords(playerPed, true, true)
 	local forward = GetEntityForwardVector(playerPed)
 	local position = vector3(coords.x + forward.x * 1.6, coords.y + forward.y * 1.6, coords.z + forward.z * 1.6)
-	local pickupModel = "s_pickup_goldbar01x"
+	local pickupModel = 's_pickup_goldbar01x'
 
 	if dropAll then
 		local randomOffsetX = math.random(-35, 35)
@@ -101,8 +106,8 @@ PickupsService.createGoldPickup = function(amount)
 
 	local entityHandle = PickupsService.CreateObject(pickupModel, position)
 
-	TriggerServerEvent("vorpinventory:shareGoldPickupServer", entityHandle, amount, position)
-	PlaySoundFrontend("show_info", "Study_Sounds", true, 0)
+	TriggerServerEvent('vorpinventory:shareGoldPickupServer', entityHandle, amount, position)
+	PlaySoundFrontend('show_info', 'Study_Sounds', true, 0)
 end
 
 PickupsService.sharePickupClient = function(data, value)
@@ -111,14 +116,14 @@ PickupsService.sharePickupClient = function(data, value)
 			local label = Utils.GetHashreadableLabel(data.name, data.weaponId)
 
 			local pickup = Pickup:New({
-				name     = (data.amount > 1) and label .. " x " .. tostring(data.amount) or label,
+				name     = (data.amount > 1) and label .. ' x ' .. tostring(data.amount) or label,
 				entityId = data.obj,
 				amount   = data.amount,
 				metadata = data.metadata,
 				weaponId = data.weaponId,
 				coords   = data.position,
 				prompt   = Prompt:New(0xF84FA74F, T.TakeFromFloor, PromptType.StandardHold, promptGroup),
-				uid      = data.uid
+				uid      = data.uid,
 
 			})
 			pickup.prompt:SetVisible(false)
@@ -139,13 +144,13 @@ PickupsService.shareMoneyPickupClient = function(entityHandle, amount, position,
 	if value == 1 then
 		if WorldPickups[entityHandle] == nil then
 			local pickup = Pickup:New({
-				name = "Money (" .. tostring(amount) .. ")",
+				name = 'Dinheiro (' .. tostring(amount) .. ')',
 				entityId = entityHandle,
 				amount = amount,
 				isMoney = true,
 				isGold = false,
 				coords = position,
-				prompt = Prompt:New(0xF84FA74F, T.TakeFromFloor, PromptType.StandardHold, promptGroup)
+				prompt = Prompt:New(0xF84FA74F, T.TakeFromFloor, PromptType.StandardHold, promptGroup),
 			})
 
 			pickup.prompt:SetVisible(false)
@@ -166,13 +171,13 @@ PickupsService.shareGoldPickupClient = function(entityHandle, amount, position, 
 	if value == 1 then
 		if WorldPickups[entityHandle] == nil then
 			local pickup = Pickup:New({
-				name = "Gold (" .. tostring(amount) .. ")",
+				name = 'Gold (' .. tostring(amount) .. ')',
 				entityId = entityHandle,
 				amount = amount,
 				isMoney = false,
 				isGold = true,
 				coords = position,
-				prompt = Prompt:New(0xF84FA74F, T.TakeFromFloor, PromptType.StandardHold, promptGroup)
+				prompt = Prompt:New(0xF84FA74F, T.TakeFromFloor, PromptType.StandardHold, promptGroup),
 			})
 
 
@@ -199,7 +204,7 @@ PickupsService.removePickupClient = function(entityHandle)
 		timeout = timeout + 100
 		if timeout == 5000 then
 			if Config.Debug then
-				print("Failed to get Control of the Entity")
+				print('Failed to get Control of the Entity')
 			end
 		end
 		Wait(100)
@@ -212,16 +217,16 @@ end
 
 PickupsService.playerAnim = function(obj)
 	local playerPed = PlayerPedId()
-	local animDict = "amb_work@world_human_box_pickup@1@male_a@stand_exit_withprop"
+	local animDict = 'amb_work@world_human_box_pickup@1@male_a@stand_exit_withprop'
 	RequestAnimDict(animDict)
 
 	while not HasAnimDictLoaded(animDict) do
 		Wait(10)
 	end
 
-	TaskPlayAnim(playerPed, animDict, "exit_front", 1.0, 8.0, -1, 1, 0, false, false, false)
+	TaskPlayAnim(playerPed, animDict, 'base', 1.0, 8.0, -1, 1, 0, false, false, false)
 	Wait(1200)
-	PlaySoundFrontend("CHECKPOINT_PERFECT", "HUD_MINI_GAME_SOUNDSET", true, 1)
+	-- PlaySoundFrontend('CHECKPOINT_PERFECT', 'HUD_MINI_GAME_SOUNDSET', true, 1)
 	Wait(1000)
 	ClearPedTasks(playerPed)
 end
@@ -242,17 +247,17 @@ PickupsService.dropAllPlease = function()
 	end
 
 	if Config.DropOnRespawn.AllMoney then
-		TriggerServerEvent("vorpinventory:serverDropAllMoney")
+		TriggerServerEvent('vorpinventory:serverDropAllMoney')
 		Wait(200)
 	end
 
 	if Config.DropOnRespawn.PartMoney then
-		TriggerServerEvent("vorpinventory:serverDropPartMoney")
+		TriggerServerEvent('vorpinventory:serverDropPartMoney')
 		Wait(200)
 	end
 
 	if Config.UseGoldItem and Config.DropOnRespawn.Gold then
-		TriggerServerEvent("vorpinventory:serverDropAllGold")
+		TriggerServerEvent('vorpinventory:serverDropAllGold')
 		Wait(200)
 	end
 
@@ -262,14 +267,14 @@ PickupsService.dropAllPlease = function()
 			local itemCount = item:getCount()
 			local itemMetadata = item:getMetadata()
 
-			TriggerServerEvent("vorpinventory:serverDropItem", itemName, item.id, itemCount, itemMetadata)
+			TriggerServerEvent('vorpinventory:serverDropItem', itemName, item.id, itemCount, itemMetadata)
 			Wait(200)
 		end
 	end
 
 	if Config.DropOnRespawn.Weapons then
 		for index, weapon in pairs(UserWeapons) do
-			TriggerServerEvent("vorpinventory:serverDropWeapon", index)
+			TriggerServerEvent('vorpinventory:serverDropWeapon', index)
 
 			if next(UserWeapons[index]) ~= nil then
 				local currentWeapon = UserWeapons[index]
@@ -310,26 +315,29 @@ Citizen.CreateThread(function()
 				end)
 
 				for key, pickup in pairs(pickupsInRange) do
-					if pickup:Distance() <= 1.2 then
+					if pickup:Distance() <= 2.6 then
 						sleep = 0
+						DrawText3D(pickup.coords.x, pickup.coords.y, pickup.coords.z, pickup.name)
+					end
+					if pickup:Distance() <= 1.2 then
 						Citizen.InvokeNative(0x69F4BE8C8CC4796C, playerPed, pickup.entityId, 3000, 2048, 3) -- TaskLookAtEntity
 						local isDead = IsEntityDead(playerPed)
 						pickup.prompt:SetVisible(not isDead)
 
-						local promptSubLabel = CreateVarString(10, "LITERAL_STRING", pickup.name)
+						local promptSubLabel = CreateVarString(10, 'LITERAL_STRING', pickup.name)
 						PromptSetActiveGroupThisFrame(promptGroup, promptSubLabel, 1)
 
 						if pickup.prompt:HasHoldModeCompleted() then
 							if pickup.isMoney then
-								TriggerServerEvent("vorpinventory:onPickupMoney", pickup.entityId)
+								TriggerServerEvent('vorpinventory:onPickupMoney', pickup.entityId)
 							elseif Config.UseGoldItem and pickup.isGold then
-								TriggerServerEvent("vorpinventory:onPickupGold", pickup.entityId)
+								TriggerServerEvent('vorpinventory:onPickupGold', pickup.entityId)
 							else
 								local data = {
 									data = pickupsInRange,
-									key = key
+									key = key,
 								}
-								TriggerServerEvent("vorpinventory:onPickup", data)
+								TriggerServerEvent('vorpinventory:onPickup', data)
 							end
 
 							Wait(1000)
@@ -345,3 +353,21 @@ Citizen.CreateThread(function()
 		Wait(sleep)
 	end
 end)
+
+----- DRAW3DTXT -----
+function DrawText3D(x, y, z, text)
+	local onScreen, _x, _y = GetScreenCoordFromWorldCoord(x, y, z)
+	local px, py, pz = table.unpack(GetGameplayCamCoord())
+	local dist = GetDistanceBetweenCoords(px, py, pz, x, y, z, 1)
+	local str = CreateVarString(10, 'LITERAL_STRING', text, Citizen.ResultAsLong())
+	if onScreen then
+		SetTextScale(0.30, 0.30)
+		SetTextFontForCurrentCommand(1)
+		SetTextColor(255, 255, 255, 215)
+		SetTextCentre(1)
+		DisplayText(str, _x, _y)
+		local factor = (string.len(text)) / 330
+		-- DrawSprite("feeds", "hud_menu_4a", _x, _y + 0.0125, 0.015 + factor, 0.03, 0.1, 35, 35, 35, 190, 0)
+		--DrawSprite('feeds', 'toast_bg', _x, _y + 0.0100, 0.015 + factor, 0.03, 0.1, 1, 1, 1, 190, 0)
+	end
+end

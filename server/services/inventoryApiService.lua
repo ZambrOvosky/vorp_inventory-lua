@@ -20,8 +20,8 @@ InventoryAPI = {}
 ---@field limitedWeapons table<string, integer>
 CustomInventoryInfos = {
 	default = {
-		id = "default",
-		name = "Satchel",
+		id = 'default',
+		name = 'Satchel',
 		limit = Config.MaxItemsInInventory.Items,
 		shared = false,
 		limitedItems = {},
@@ -33,8 +33,8 @@ CustomInventoryInfos = {
 		UseBlackList = false,
 		BlackListItems = {},
 		whitelistWeapons = false,
-		limitedWeapons = {}
-	}
+		limitedWeapons = {},
+	},
 }
 
 ---@type table<string,function> table of Registered items
@@ -73,7 +73,7 @@ function InventoryAPI.canCarryAmountItem(player, amount, cb)
 	return respond(cb, canCarry)
 end
 
-exports("canCarryItems", InventoryAPI.canCarryAmountItem)
+exports('canCarryItems', InventoryAPI.canCarryAmountItem)
 
 
 ---check limit of item
@@ -83,7 +83,7 @@ exports("canCarryItems", InventoryAPI.canCarryAmountItem)
 ---@param cb fun(canCarry: boolean)? async or sync callback
 function InventoryAPI.canCarryItem(player, itemName, amount, cb)
 	local function exceedsItemLimit(identifier, itemName, amount, limit)
-		local items = SvUtils.FindAllItemsByName("default", identifier, itemName)
+		local items = SvUtils.FindAllItemsByName('default', identifier, itemName)
 		local count = 0
 		for _, item in pairs(items) do
 			count = count + item:getCount()
@@ -103,7 +103,7 @@ function InventoryAPI.canCarryItem(player, itemName, amount, cb)
 	local svItem = ServerItems[itemName]
 	local canCarry = false
 
-	if not SvUtils.DoesItemExist(itemName, "InventoryAPI.canCarryItem") then
+	if not SvUtils.DoesItemExist(itemName, 'InventoryAPI.canCarryItem') then
 		return respond(cb, false)
 	end
 
@@ -118,7 +118,7 @@ function InventoryAPI.canCarryItem(player, itemName, amount, cb)
 	return respond(cb, canCarry)
 end
 
-exports("canCarryItem", InventoryAPI.canCarryItem)
+exports('canCarryItem', InventoryAPI.canCarryItem)
 
 ---get player inventory
 ---@param player number source
@@ -150,7 +150,7 @@ function InventoryAPI.getInventory(player, cb)
 	end
 end
 
-exports("getUserInventoryItems", InventoryAPI.getInventory)
+exports('getUserInventoryItems', InventoryAPI.getInventory)
 
 --- register usable item
 ---@param name string item name
@@ -158,14 +158,14 @@ exports("getUserInventoryItems", InventoryAPI.getInventory)
 function InventoryAPI.registerUsableItem(name, cb)
 	if Config.Debug then
 		SetTimeout(9000, function()
-			Log.print("Callback for item[^3" .. name .. "^7] ^2Registered!^7")
+			Log.print('Callback for item[^3' .. name .. '^7] ^2Registered!^7')
 		end)
 	end
 
 	UsableItemsFunctions[name] = cb
 end
 
-exports("registerUsableItem", InventoryAPI.registerUsableItem)
+exports('registerUsableItem', InventoryAPI.registerUsableItem)
 
 --- get user weapon
 ---@param player number player source
@@ -197,7 +197,7 @@ function InventoryAPI.getUserWeapon(player, cb, weaponId)
 	return respond(cb, weapon)
 end
 
-exports("getUserWeapon", InventoryAPI.getUserWeapon)
+exports('getUserWeapon', InventoryAPI.getUserWeapon)
 
 --- get all user weapons
 ---@param player number source
@@ -234,7 +234,7 @@ function InventoryAPI.getUserWeapons(player, cb)
 	return respond(cb, userWeapons2)
 end
 
-exports("getUserInventoryWeapons", InventoryAPI.getUserWeapons)
+exports('getUserInventoryWeapons', InventoryAPI.getUserWeapons)
 
 --- get user weapon bullets
 ---@param player number source
@@ -255,7 +255,7 @@ function InventoryAPI.getWeaponBullets(player, weaponId, cb)
 	return respond(cb, 0)
 end
 
-exports("getWeaponBullets", InventoryAPI.getWeaponBullets)
+exports('getWeaponBullets', InventoryAPI.getWeaponBullets)
 
 --- remove all user ammo
 ---@param player number source
@@ -264,12 +264,12 @@ exports("getWeaponBullets", InventoryAPI.getWeaponBullets)
 function InventoryAPI.removeAllUserAmmo(player, cb)
 	local _source = player
 	allplayersammo[_source].ammo = {}
-	TriggerClientEvent("vorpinventory:updateuiammocount", _source, allplayersammo[_source].ammo)
-	TriggerClientEvent("vorpinventory:recammo", _source, allplayersammo[_source])
+	TriggerClientEvent('vorpinventory:updateuiammocount', _source, allplayersammo[_source].ammo)
+	TriggerClientEvent('vorpinventory:recammo', _source, allplayersammo[_source])
 	return respond(cb, true)
 end
 
-exports("removeAllUserAmmo", InventoryAPI.removeAllUserAmmo)
+exports('removeAllUserAmmo', InventoryAPI.removeAllUserAmmo)
 
 
 --- add bullets to player
@@ -291,16 +291,16 @@ function InventoryAPI.addBullets(player, bulletType, amount, cb)
 	end
 
 	allplayersammo[_source].ammo = ammo
-	TriggerClientEvent("vorpinventory:updateuiammocount", _source, allplayersammo[_source].ammo)
-	TriggerClientEvent("vorpCoreClient:addBullets", _source, bulletType, ammo[bulletType])
-	TriggerClientEvent("vorpinventory:recammo", _source, allplayersammo[_source])
+	TriggerClientEvent('vorpinventory:updateuiammocount', _source, allplayersammo[_source].ammo)
+	TriggerClientEvent('vorpCoreClient:addBullets', _source, bulletType, ammo[bulletType])
+	TriggerClientEvent('vorpinventory:recammo', _source, allplayersammo[_source])
 	local query1 = 'UPDATE characters SET ammo = @ammo WHERE charidentifier = @charidentifier'
 	local params1 = { charidentifier = charidentifier, ammo = json.encode(ammo) }
 	DBService.updateAsync(query1, params1, function(r) end)
 	return respond(cb, true)
 end
 
-exports("addBullets", InventoryAPI.addBullets)
+exports('addBullets', InventoryAPI.addBullets)
 
 
 ---sub bullets from player
@@ -318,15 +318,15 @@ function InventoryAPI.subBullets(weaponId, bulletType, amount, cb)
 	if userWeapons then
 		if userWeapons:getPropietary() == identifier then
 			userWeapons:subAmmo(bulletType, amount)
-			TriggerClientEvent("vorpCoreClient:subBullets", _source, bulletType, amount)
-			TriggerClientEvent("vorpinventory:updateuiammocount", _source, allplayersammo[_source].ammo)
+			TriggerClientEvent('vorpCoreClient:subBullets', _source, bulletType, amount)
+			TriggerClientEvent('vorpinventory:updateuiammocount', _source, allplayersammo[_source].ammo)
 			return respond(cb, true)
 		end
 	end
 	return respond(cb, false)
 end
 
-exports("subBullets", InventoryAPI.subBullets)
+exports('subBullets', InventoryAPI.subBullets)
 
 
 --- Get item count from player inventory
@@ -340,15 +340,21 @@ function InventoryAPI.getItemCount(player, cb, itemName, metadata)
 	local svItem = ServerItems[itemName]
 
 	if not _source then
-		Log.error("InventoryAPI.getItemCount: specify a source")
+		Log.error('InventoryAPI.getItemCount: specify a source')
 		return respond(cb, 0)
 	end
 
-	if not SvUtils.DoesItemExist(itemName, "getItemCount") then
+	if not SvUtils.DoesItemExist(itemName, 'getItemCount') then
 		return respond(cb, 0)
 	end
 
-	local identifier = Core.getUser(_source).getUsedCharacter.identifier
+	local User = Core.getUser(_source)
+	if not User then
+		Log.Warning('InventoryAPI.getItemCount: User is no more')
+		return respond(cb, 0)
+	end
+
+	local identifier = User.getUsedCharacter.identifier
 	metadata = SharedUtils.MergeTables(svItem.metadata, metadata or {})
 
 	local userInventory = UsersInventories.default[identifier]
@@ -357,15 +363,15 @@ function InventoryAPI.getItemCount(player, cb, itemName, metadata)
 		return respond(cb, 0)
 	end
 
-	local item = SvUtils.FindItemByNameAndMetadata("default", identifier, itemName, metadata)
-		or SvUtils.FindItemByNameAndMetadata("default", identifier, itemName, nil)
+	local item = SvUtils.FindItemByNameAndMetadata('default', identifier, itemName, metadata)
+		or SvUtils.FindItemByNameAndMetadata('default', identifier, itemName, nil)
 
 	local count = item and item:getCount() or 0
 
 	return respond(cb, count)
 end
 
-exports("getItemCount", InventoryAPI.getItemCount)
+exports('getItemCount', InventoryAPI.getItemCount)
 
 --- get item data from items loaded DB
 ---@param itemName string item name
@@ -379,7 +385,7 @@ function InventoryAPI.getItemDB(itemName, cb)
 	return respond(cb, svItem)
 end
 
-exports("getItemDB", InventoryAPI.getItemDB)
+exports('getItemDB', InventoryAPI.getItemDB)
 
 
 ---get item data by item name
@@ -392,11 +398,11 @@ function InventoryAPI.getItemByName(player, itemName, cb)
 	local sourceCharacter = Core.getUser(_source).getUsedCharacter
 	local identifier = sourceCharacter.identifier
 
-	if not SvUtils.DoesItemExist(itemName, "getItemByName") then
+	if not SvUtils.DoesItemExist(itemName, 'getItemByName') then
 		return respond(cb, nil)
 	end
 
-	local item = SvUtils.FindItemByNameAndMetadata("default", identifier, itemName, nil)
+	local item = SvUtils.FindItemByNameAndMetadata('default', identifier, itemName, nil)
 
 	if not item then
 		return respond(cb, nil)
@@ -405,7 +411,7 @@ function InventoryAPI.getItemByName(player, itemName, cb)
 	return respond(cb, item)
 end
 
-exports("getItemByName", InventoryAPI.getItemByName)
+exports('getItemByName', InventoryAPI.getItemByName)
 
 ---get item data by item name and its metadata
 ---@param player number source
@@ -418,11 +424,11 @@ function InventoryAPI.getItemContainingMetadata(player, itemName, metadata, cb)
 	local sourceCharacter = Core.getUser(_source).getUsedCharacter
 	local identifier = sourceCharacter.identifier
 
-	if not SvUtils.DoesItemExist(itemName, "getItemContainingMetadata") then
+	if not SvUtils.DoesItemExist(itemName, 'getItemContainingMetadata') then
 		return respond(cb, nil)
 	end
 
-	local item = SvUtils.FindItemByNameAndContainingMetadata("default", identifier, itemName, metadata)
+	local item = SvUtils.FindItemByNameAndContainingMetadata('default', identifier, itemName, metadata)
 
 	if not item then
 		return respond(cb, nil)
@@ -431,7 +437,7 @@ function InventoryAPI.getItemContainingMetadata(player, itemName, metadata, cb)
 	return respond(cb, item)
 end
 
-exports("getItemContainingMetadata", InventoryAPI.getItemContainingMetadata)
+exports('getItemContainingMetadata', InventoryAPI.getItemContainingMetadata)
 
 --- get item matching metadata
 ---@param player number source
@@ -444,12 +450,12 @@ function InventoryAPI.getItemMatchingMetadata(player, itemName, metadata, cb)
 	local identifier = sourceCharacter.identifier
 	local svItem = ServerItems[itemName]
 
-	if not SvUtils.DoesItemExist(itemName, "getItemContainingMetadata") then
+	if not SvUtils.DoesItemExist(itemName, 'getItemContainingMetadata') then
 		return respond(cb, nil)
 	end
 
 	metadata = SharedUtils.MergeTables(svItem.metadata or {}, metadata or {})
-	local item = SvUtils.FindItemByNameAndMetadata("default", identifier, itemName, metadata)
+	local item = SvUtils.FindItemByNameAndMetadata('default', identifier, itemName, metadata)
 
 	if not item then
 		return respond(cb, nil)
@@ -458,7 +464,7 @@ function InventoryAPI.getItemMatchingMetadata(player, itemName, metadata, cb)
 	return respond(cb, item)
 end
 
-exports("getItemMatchingMetadata", InventoryAPI.getItemMatchingMetadata)
+exports('getItemMatchingMetadata', InventoryAPI.getItemMatchingMetadata)
 
 ---add item to player
 ---@param player number source
@@ -471,10 +477,10 @@ function InventoryAPI.addItem(player, name, amount, metadata, cb)
 	local svItem = ServerItems[name]
 
 	if not _source then
-		return Log.error("InventoryAPI.addItem: specify a source")
+		return Log.error('InventoryAPI.addItem: specify a source')
 	end
 
-	if not SvUtils.DoesItemExist(name, "addItem") then
+	if not SvUtils.DoesItemExist(name, 'addItem') then
 		return respond(cb, false)
 	end
 
@@ -493,11 +499,11 @@ function InventoryAPI.addItem(player, name, amount, metadata, cb)
 	end
 
 	metadata = SharedUtils.MergeTables(svItem.metadata, metadata or {})
-	local item = SvUtils.FindItemByNameAndMetadata("default", identifier, name, metadata)
+	local item = SvUtils.FindItemByNameAndMetadata('default', identifier, name, metadata)
 	if item then -- Item already exist in inventory
 		item:addCount(amount)
 		DBService.SetItemAmount(charIdentifier, item:getId(), item:getCount())
-		TriggerClientEvent("vorpCoreClient:addItem", _source, item)
+		TriggerClientEvent('vorpCoreClient:addItem', _source, item)
 		return respond(cb, true)
 	else
 		DBService.CreateItem(charIdentifier, svItem:getId(), amount, metadata, function(craftedItem)
@@ -513,16 +519,16 @@ function InventoryAPI.addItem(player, name, amount, metadata, cb)
 				canRemove = svItem:getCanRemove(),
 				owner = charIdentifier,
 				desc = svItem:getDesc(),
-				group = svItem:getGroup() or 1
+				group = svItem:getGroup() or 1,
 			})
 			userInventory[craftedItem.id] = item
-			TriggerClientEvent("vorpCoreClient:addItem", _source, item)
+			TriggerClientEvent('vorpCoreClient:addItem', _source, item)
 		end)
 		return respond(cb, true)
 	end
 end
 
-exports("addItem", InventoryAPI.addItem)
+exports('addItem', InventoryAPI.addItem)
 
 --- get item by its main id
 ---@param player number source
@@ -558,7 +564,7 @@ function InventoryAPI.getItemByMainId(player, mainid, cb)
 	return respond(cb, nil)
 end
 
-exports("getItemByMainId", InventoryAPI.getItemByMainId)
+exports('getItemByMainId', InventoryAPI.getItemByMainId)
 
 --- sub item by its id
 ---@param player number source
@@ -581,7 +587,7 @@ function InventoryAPI.subItemID(player, id, cb)
 	end
 	item:quitCount(1)
 
-	TriggerClientEvent("vorpCoreClient:subItem", _source, itemid, item:getCount())
+	TriggerClientEvent('vorpCoreClient:subItem', _source, itemid, item:getCount())
 
 	if itemCount == 1 then
 		userInventory[itemid] = nil
@@ -592,7 +598,7 @@ function InventoryAPI.subItemID(player, id, cb)
 	return respond(cb, true)
 end
 
-exports("subItemID", InventoryAPI.subItemID)
+exports('subItemID', InventoryAPI.subItemID)
 
 
 ---sub item by name
@@ -608,7 +614,7 @@ function InventoryAPI.subItem(player, name, amount, metadata, cb)
 	local svItem = ServerItems[name]
 
 
-	if not SvUtils.DoesItemExist(name, "subItem") then
+	if not SvUtils.DoesItemExist(name, 'subItem') then
 		return respond(cb, false)
 	end
 
@@ -618,8 +624,8 @@ function InventoryAPI.subItem(player, name, amount, metadata, cb)
 	metadata = SharedUtils.MergeTables(svItem.metadata, metadata or {})
 
 
-	local item = SvUtils.FindItemByNameAndMetadata("default", identifier, name, metadata)
-		or SvUtils.FindItemByName("default", identifier, name)
+	local item = SvUtils.FindItemByNameAndMetadata('default', identifier, name, metadata)
+		or SvUtils.FindItemByName('default', identifier, name)
 
 	if not item then
 		return respond(cb, false)
@@ -633,7 +639,7 @@ function InventoryAPI.subItem(player, name, amount, metadata, cb)
 	end
 
 	item:quitCount(amount)
-	TriggerClientEvent("vorpCoreClient:subItem", _source, item:getId(), item:getCount())
+	TriggerClientEvent('vorpCoreClient:subItem', _source, item:getId(), item:getCount())
 
 
 	if item:getCount() == 0 then
@@ -646,7 +652,7 @@ function InventoryAPI.subItem(player, name, amount, metadata, cb)
 	return respond(cb, true)
 end
 
-exports("subItem", InventoryAPI.subItem)
+exports('subItem', InventoryAPI.subItem)
 
 ---set item metadata with item id
 ---@param player number source
@@ -678,11 +684,11 @@ function InventoryAPI.setItemMetadata(player, itemId, metadata, amount, cb)
 	if amountRemove >= count then -- if greater or equals we set meta data
 		DBService.SetItemMetadata(charId, item.id, metadata)
 		item:setMetadata(metadata)
-		TriggerClientEvent("vorpCoreClient:SetItemMetadata", _source, itemId, metadata)
+		TriggerClientEvent('vorpCoreClient:SetItemMetadata', _source, itemId, metadata)
 	else
 		item:quitCount(amountRemove)
 		DBService.SetItemAmount(charId, item.id, item:getCount())
-		TriggerClientEvent("vorpCoreClient:subItem", _source, item:getId(), item:getCount())
+		TriggerClientEvent('vorpCoreClient:subItem', _source, item:getId(), item:getCount())
 		DBService.CreateItem(charId, ServerItems[item.name].id, amount or 1, metadata, function(craftedItem)
 			item = Item:New(
 				{
@@ -700,22 +706,22 @@ function InventoryAPI.setItemMetadata(player, itemId, metadata, amount, cb)
 					group = item:getGroup(),
 				})
 			userInventory[craftedItem.id] = item
-			TriggerClientEvent("vorpCoreClient:addItem", _source, item)
+			TriggerClientEvent('vorpCoreClient:addItem', _source, item)
 		end)
 	end
 
 	return respond(cb, true)
 end
 
-exports("setItemMetadata", InventoryAPI.setItemMetadata)
+exports('setItemMetadata', InventoryAPI.setItemMetadata)
 
 
 
 --- can carry ammount of weapons
 ---@param player number source
 ---@param amount number amount to check
----@param weaponName string? weapon name not neccesary but allows to check if weapon is in the list of not weapons
----@param cb fun(success: boolean)?   async or sync callback
+---@param weaponName string |nil weapon name not neccesary but allows to check if weapon is in the list of not weapons
+---@param cb fun(success: boolean)| nil   async or sync callback
 ---@return boolean
 function InventoryAPI.canCarryAmountWeapons(player, amount, cb, weaponName)
 	local _source = player
@@ -747,7 +753,7 @@ function InventoryAPI.canCarryAmountWeapons(player, amount, cb, weaponName)
 	return respond(cb, true)
 end
 
-exports("canCarryWeapons", InventoryAPI.canCarryAmountWeapons)
+exports('canCarryWeapons', InventoryAPI.canCarryAmountWeapons)
 
 ---get item data
 ---@param player number source
@@ -761,13 +767,13 @@ function InventoryAPI.getItem(player, itemName, cb, metadata)
 	local identifier = sourceCharacter.identifier
 	local svItem = ServerItems[itemName]
 
-	if not SvUtils.DoesItemExist(itemName, "getItem") then
+	if not SvUtils.DoesItemExist(itemName, 'getItem') then
 		return respond(cb, nil)
 	end
 
 	metadata = SharedUtils.MergeTables(svItem.metadata or {}, metadata or {})
-	local item = SvUtils.FindItemByNameAndMetadata("default", identifier, itemName, metadata) or
-		SvUtils.FindItemByNameAndMetadata("default", identifier, itemName, nil)
+	local item = SvUtils.FindItemByNameAndMetadata('default', identifier, itemName, metadata) or
+		SvUtils.FindItemByNameAndMetadata('default', identifier, itemName, nil)
 
 	if not item then
 		return respond(cb, nil)
@@ -776,7 +782,7 @@ function InventoryAPI.getItem(player, itemName, cb, metadata)
 	return respond(cb, item)
 end
 
-exports("getItem", InventoryAPI.getItem)
+exports('getItem', InventoryAPI.getItem)
 
 --- set custom labels
 ---@param weaponId number weapon id
@@ -797,7 +803,7 @@ function InventoryAPI.setWeaponCustomLabel(weaponId, label, cb)
 	return respond(cb, false)
 end
 
-exports("setWeaponCustomLabel", InventoryAPI.setWeaponCustomLabel)
+exports('setWeaponCustomLabel', InventoryAPI.setWeaponCustomLabel)
 
 --- set custom serial numbers
 ---@param weaponId number weapon id
@@ -818,7 +824,7 @@ function InventoryAPI.setWeaponSerialNumber(weaponId, serial, cb)
 	return respond(cb, false)
 end
 
-exports("setWeaponSerialNumber", InventoryAPI.setWeaponSerialNumber)
+exports('setWeaponSerialNumber', InventoryAPI.setWeaponSerialNumber)
 
 --- set custom desc
 ---@param weaponId number weapon id
@@ -839,7 +845,7 @@ function InventoryAPI.setWeaponCustomDesc(weaponId, desc, cb)
 	return respond(cb, false)
 end
 
-exports("setWeaponCustomDesc", InventoryAPI.setWeaponCustomDesc)
+exports('setWeaponCustomDesc', InventoryAPI.setWeaponCustomDesc)
 
 --- get weapon components
 ---@param player number source
@@ -858,7 +864,7 @@ function InventoryAPI.getcomps(player, weaponid, cb)
 	end)
 end
 
-exports("getWeaponComponents", InventoryAPI.getcomps)
+exports('getWeaponComponents', InventoryAPI.getcomps)
 
 ---delete weapon from player using id
 ---@param player number source
@@ -875,7 +881,7 @@ function InventoryAPI.deleteWeapon(player, weaponid, cb)
 	return respond(cb, true)
 end
 
-exports("deleteWeapon", InventoryAPI.deleteWeapon)
+exports('deleteWeapon', InventoryAPI.deleteWeapon)
 
 --- registr weapon to player
 ---@param _target number source
@@ -888,8 +894,17 @@ exports("deleteWeapon", InventoryAPI.deleteWeapon)
 ---@param customSerial string | nil? custom serial number
 ---@param customLabel string | nil? custom label
 ---@return nil | boolean
-function InventoryAPI.registerWeapon(_target, wepname, ammos, components, comps, cb, wepId, customSerial, customLabel,
-									 customDesc)
+function InventoryAPI.registerWeapon(
+	_target,
+	wepname,
+	ammos,
+	components,
+	comps,
+	cb,
+	wepId,
+	customSerial,
+	customLabel,
+	customDesc)
 	local targetUser = Core.getUser(_target)
 	local targetCharacter = targetUser.getUsedCharacter
 	local targetIdentifier = targetCharacter.identifier
@@ -929,10 +944,10 @@ function InventoryAPI.registerWeapon(_target, wepname, ammos, components, comps,
 		if not notListed then
 			local targetTotalWeaponCount = InventoryAPI.getUserTotalCountWeapons(targetIdentifier, targetCharId) + 1
 			if targetTotalWeaponCount > DefaultAmount then
-				TriggerClientEvent("vorp:TipRight", _target, T.cantweapons2, 2000)
+				TriggerClientEvent('vorp:TipRight', _target, T.cantweapons2, 2000)
 				if Config.Debug then
 					Log.Warning(targetCharacter.firstname ..
-						" " .. targetCharacter.lastname .. " ^1Can't carry more weapons^7")
+						' ' .. targetCharacter.lastname .. " ^1Can't carry more weapons^7")
 				end
 				return respond(cb, nil)
 			end
@@ -1016,7 +1031,7 @@ function InventoryAPI.registerWeapon(_target, wepname, ammos, components, comps,
 				used = false,
 				used2 = false,
 				charId = targetCharId,
-				currInv = "default",
+				currInv = 'default',
 				dropped = 0,
 				source = _target,
 				label = label,
@@ -1026,19 +1041,19 @@ function InventoryAPI.registerWeapon(_target, wepname, ammos, components, comps,
 				group = 5,
 			})
 			UsersWeapons.default[weaponId] = newWeapon
-			TriggerEvent("syn_weapons:registerWeapon", weaponId)
-			TriggerClientEvent("vorpInventory:receiveWeapon", _target, weaponId, targetIdentifier, name, ammo, label,
+			TriggerEvent('syn_weapons:registerWeapon', weaponId)
+			TriggerClientEvent('vorpInventory:receiveWeapon', _target, weaponId, targetIdentifier, name, ammo, label,
 				serialNumber, label, _target, desc)
 		end)
 		return respond(cb, true)
 	end
 
-	Log.Warning("Weapon: [^2" .. name .. "^7] ^1 do not exist on the config or its a WRONG HASH")
+	Log.Warning('Weapon: [^2' .. name .. '^7] ^1 do not exist on the config or its a WRONG HASH')
 
 	return respond(cb, nil)
 end
 
-exports("createWeapon", InventoryAPI.registerWeapon)
+exports('createWeapon', InventoryAPI.registerWeapon)
 
 
 ---give weapon to target
@@ -1080,10 +1095,10 @@ function InventoryAPI.giveWeapon(player, weaponId, target, cb)
 			local sourceTotalWeaponCount = InventoryAPI.getUserTotalCountWeapons(sourceIdentifier, sourceCharId) + 1
 
 			if sourceTotalWeaponCount > DefaultAmount then
-				TriggerClientEvent("vorp:TipRight", _source, T.cantweapons, 2000)
+				TriggerClientEvent('vorp:TipRight', _source, T.cantweapons, 2000)
 				if Config.Debug then
 					Log.print(sourceCharacter.firstname ..
-						" " .. sourceCharacter.lastname .. " ^1Can't carry more weapons^7")
+						' ' .. sourceCharacter.lastname .. " ^1Can't carry more weapons^7")
 				end
 				return respond(cb, false)
 			end
@@ -1100,31 +1115,31 @@ function InventoryAPI.giveWeapon(player, weaponId, target, cb)
 		local customLabel = weapon:getCustomLabel()
 		local customDesc = weapon:getCustomDesc()
 
-		local query = "UPDATE loadout SET identifier = @identifier, charidentifier = @charid WHERE id = @id"
+		local query = 'UPDATE loadout SET identifier = @identifier, charidentifier = @charid WHERE id = @id'
 		local params = {
 			identifier = sourceIdentifier,
 			charid = sourceCharId,
-			id = weaponId
+			id = weaponId,
 		}
 
 		DBService.updateAsync(query, params, function(r)
-			if _target then
+			if not _target then
 				weapon:setSource(_target)
-				TriggerClientEvent('vorp:ShowAdvancedRightNotification', _target, T.youGaveWeapon, "inventory_items",
-					weaponName, "COLOR_PURE_WHITE", 4000)
-				TriggerClientEvent("vorpCoreClient:subWeapon", _target, weaponId)
+				TriggerClientEvent('vorp:ShowAdvancedRightNotification', _target, T.youGaveWeapon, 'inventory_items',
+					weaponName, 'COLOR_PURE_WHITE', 4000)
+				TriggerClientEvent('vorpCoreClient:subWeapon', _target, weaponId)
 			end
-			TriggerClientEvent('vorp:ShowAdvancedRightNotification', _source, T.youReceivedWeapon, "inventory_items",
-				weaponName, "COLOR_PURE_WHITE", 4000)
+			TriggerClientEvent('vorp:ShowAdvancedRightNotification', _source, T.youReceivedWeapon, 'inventory_items',
+				weaponName, 'COLOR_PURE_WHITE', 4000)
 
-			TriggerClientEvent("vorpInventory:receiveWeapon", _source, weaponId, weaponPropietary, weaponName, weaponAmmo,
+			TriggerClientEvent('vorpInventory:receiveWeapon', _source, weaponId, weaponPropietary, weaponName, weaponAmmo,
 				label, serialNumber, customLabel, _source, customDesc)
 		end)
 	end
 	return respond(cb, true)
 end
 
-exports("giveWeapon", InventoryAPI.giveWeapon)
+exports('giveWeapon', InventoryAPI.giveWeapon)
 
 --- sub weapon wont delete weapon it will set the propietary to empty
 ---@param player number source
@@ -1139,22 +1154,22 @@ function InventoryAPI.subWeapon(player, weaponId, cb)
 
 	if userWeapons then
 		userWeapons:setPropietary('')
-		local query = "UPDATE loadout SET identifier = @identifier, charidentifier = @charid WHERE id = @id"
+		local query = 'UPDATE loadout SET identifier = @identifier, charidentifier = @charid WHERE id = @id'
 		local params = {
 			identifier = '',
 			charid = charId,
-			id = weaponId
+			id = weaponId,
 		}
 		DBService.updateAsync(query, params, function(r)
-			TriggerClientEvent("vorpCoreClient:subWeapon", _source, weaponId)
+			TriggerClientEvent('vorpCoreClient:subWeapon', _source, weaponId)
 		end)
-		TriggerClientEvent("vorpCoreClient:subWeapon", _source, weaponId)
+		TriggerClientEvent('vorpCoreClient:subWeapon', _source, weaponId)
 		return respond(cb, true)
 	end
 	return respond(cb, false)
 end
 
-exports("subWeapon", InventoryAPI.subWeapon)
+exports('subWeapon', InventoryAPI.subWeapon)
 
 
 ---get User by identifier total count of items
@@ -1206,11 +1221,11 @@ function InventoryAPI.registerInventory(data)
 	newInventory:Register()
 
 	if Config.Debug then
-		Log.print("Custom inventory[^3" .. data.id .. "^7] ^2Registered!^7")
+		Log.print('Custom inventory[^3' .. data.id .. '^7] ^2Registered!^7')
 	end
 end
 
-exports("registerInventory", InventoryAPI.registerInventory)
+exports('registerInventory', InventoryAPI.registerInventory)
 
 local function canContinue(id)
 	if not CustomInventoryInfos[id] then
@@ -1236,16 +1251,16 @@ function InventoryAPI.AddPermissionMoveToCustom(id, jobName, grade)
 
 	local data = {
 		name = jobName,
-		grade = grade
+		grade = grade,
 	}
 	CustomInventoryInfos[id]:AddPermissionMoveTo(data)
 
 	if Config.Debug then
-		Log.print("AdPermsMoveTo  for [^3" .. jobName .. "^7] and grade [^3" .. grade .. "^7]")
+		Log.print('AdPermsMoveTo  for [^3' .. jobName .. '^7] and grade [^3' .. grade .. '^7]')
 	end
 end
 
-exports("AddPermissionMoveToCustom", InventoryAPI.AddPermissionMoveToCustom)
+exports('AddPermissionMoveToCustom', InventoryAPI.AddPermissionMoveToCustom)
 
 --- * add permissions to take items from custom inventory
 ---@param id string inventory id
@@ -1258,17 +1273,17 @@ function InventoryAPI.AddPermissionTakeFromCustom(id, jobName, grade)
 
 	local data = {
 		name = jobName,
-		grade = grade
+		grade = grade,
 	}
 
 	CustomInventoryInfos[id]:AddPermissionTakeFrom(data)
 
 	if Config.Debug then
-		Log.print("AdPermsTakeFrom  for [^3" .. jobName .. "^7] and grade [^3" .. grade .. "^7]")
+		Log.print('AdPermsTakeFrom  for [^3' .. jobName .. '^7] and grade [^3' .. grade .. '^7]')
 	end
 end
 
-exports("AddPermissionTakeFromCustom", InventoryAPI.AddPermissionTakeFromCustom)
+exports('AddPermissionTakeFromCustom', InventoryAPI.AddPermissionTakeFromCustom)
 
 --- Black list weapons or items
 ---@param id string inventory id
@@ -1278,16 +1293,16 @@ function InventoryAPI.BlackListCustom(id, name)
 		return
 	end
 	local data = {
-		name = name
+		name = name,
 	}
 	CustomInventoryInfos[id]:BlackList(data)
 
 	if Config.Debug then
-		Log.print("Blacklisted [^3" .. name .. "^7]")
+		Log.print('Blacklisted [^3' .. name .. '^7]')
 	end
 end
 
-exports("BlackListCustomAny", InventoryAPI.BlackListCustom)
+exports('BlackListCustomAny', InventoryAPI.BlackListCustom)
 
 ---Remove inventory by id from server
 ---@param id string inventory id
@@ -1298,11 +1313,11 @@ function InventoryAPI.removeInventory(id)
 	CustomInventoryInfos[id]:removeCustomInventory()
 
 	if Config.Debug then
-		Log.print("Custom inventory[^3" .. id .. "^7] ^2Removed!^7")
+		Log.print('Custom inventory[^3' .. id .. '^7] ^2Removed!^7')
 	end
 end
 
-exports("removeInventory", InventoryAPI.removeInventory)
+exports('removeInventory', InventoryAPI.removeInventory)
 
 ---update custom inventory slots
 ---@param id string inventory id
@@ -1315,11 +1330,11 @@ function InventoryAPI.updateCustomInventorySlots(id, slots)
 	CustomInventoryInfos[id]:setCustomInventoryLimit(slots)
 
 	if Config.Debug then
-		Log.print("Custom inventory[^3" .. id .. "^7] set slots to ^2" .. slots .. "^7")
+		Log.print('Custom inventory[^3' .. id .. '^7] set slots to ^2' .. slots .. '^7')
 	end
 end
 
-exports("updateCustomInventorySlots", InventoryAPI.updateCustomInventorySlots)
+exports('updateCustomInventorySlots', InventoryAPI.updateCustomInventorySlots)
 
 ---set custom inventory item limit
 ---@param id string inventory id
@@ -1336,16 +1351,16 @@ function InventoryAPI.setCustomInventoryItemLimit(id, itemName, limit)
 
 	local data = {
 		name = itemName:lower(),
-		limit = limit
+		limit = limit,
 	}
 
 	CustomInventoryInfos[id]:setCustomItemLimit(data)
 	if Config.Debug then
-		Log.print("Custom inventory[^3" .. id .. "^7] set item[^3" .. itemName .. "^7] limit to ^2" .. limit .. "^7")
+		Log.print('Custom inventory[^3' .. id .. '^7] set item[^3' .. itemName .. '^7] limit to ^2' .. limit .. '^7')
 	end
 end
 
-exports("setCustomInventoryItemLimit", InventoryAPI.setCustomInventoryItemLimit)
+exports('setCustomInventoryItemLimit', InventoryAPI.setCustomInventoryItemLimit)
 
 --- set custom inventory weapon limit
 ---@param id string inventory id
@@ -1362,28 +1377,26 @@ function InventoryAPI.setCustomInventoryWeaponLimit(id, wepName, limit)
 
 	local data = {
 		name = wepName:lower(),
-		limit = limit
+		limit = limit,
 	}
 
 	CustomInventoryInfos[id]:setCustomWeaponLimit(data)
 
 	if Config.Debug then
-		Log.print("Custom inventory[^3" .. id .. "^7] set item[^3" .. wepName .. "^7] limit to ^2" .. limit .. "^7")
+		Log.print('Custom inventory[^3' .. id .. '^7] set item[^3' .. wepName .. '^7] limit to ^2' .. limit .. '^7')
 	end
 end
 
-exports("setCustomInventoryWeaponLimit", InventoryAPI.setCustomInventoryWeaponLimit)
+exports('setCustomInventoryWeaponLimit', InventoryAPI.setCustomInventoryWeaponLimit)
 
 --- open inventory
 ---@param player number player
 ---@param id string? inventory id
 function InventoryAPI.openInventory(player, id)
-        local _source = player
-
+	local _source = player
 	if not id then
-		return TriggerClientEvent("vorp_inventory:OpenInv", _source)
+		return TriggerClientEvent('vorp_inventory:OpenInv', _source)
 	end
-
 
 	if not CustomInventoryInfos[id] or not UsersInventories[id] then
 		return
@@ -1420,7 +1433,7 @@ function InventoryAPI.openInventory(player, id)
 	end
 
 	local function triggerAndReloadInventory()
-		TriggerClientEvent("vorp_inventory:OpenCustomInv", _source, CustomInventoryInfos[id]:getName(), id, capacity)
+		TriggerClientEvent('vorp_inventory:OpenCustomInv', _source, CustomInventoryInfos[id]:getName(), id, capacity)
 		InventoryService.reloadInventory(_source, id)
 	end
 
@@ -1445,7 +1458,7 @@ function InventoryAPI.openInventory(player, id)
 	end
 end
 
-exports("openInventory", InventoryAPI.openInventory)
+exports('openInventory', InventoryAPI.openInventory)
 
 ---close  inventory
 ---@param source number
@@ -1453,13 +1466,13 @@ exports("openInventory", InventoryAPI.openInventory)
 function InventoryAPI.closeInventory(source, id)
 	local _source = source
 	if id and CustomInventoryInfos[id] then
-		return TriggerClientEvent("vorp_inventory:CloseCustomInv", _source)
+		return TriggerClientEvent('vorp_inventory:CloseCustomInv', _source)
 	end
 
-	TriggerClientEvent("vorp_inventory:CloseInv", source)
+	TriggerClientEvent('vorp_inventory:CloseInv', source)
 end
 
-exports("closeInventory", InventoryAPI.closeInventory)
+exports('closeInventory', InventoryAPI.closeInventory)
 
 
 --- check if custom inventory is already registered
@@ -1474,7 +1487,7 @@ function InventoryAPI.isCustomInventoryRegistered(id, callback)
 	return respond(callback, false)
 end
 
-exports("isCustomInventoryRegistered", InventoryAPI.isCustomInventoryRegistered)
+exports('isCustomInventoryRegistered', InventoryAPI.isCustomInventoryRegistered)
 
 --- get registered custom inventory data
 ---@param id string inventory id
@@ -1487,7 +1500,7 @@ function InventoryAPI.getCustomInventoryData(id, callback)
 	return respond(callback, false)
 end
 
-exports("getCustomInventoryData", InventoryAPI.getCustomInventoryData)
+exports('getCustomInventoryData', InventoryAPI.getCustomInventoryData)
 
 --- update registered custom inventory data
 ---@param id string inventory id
@@ -1502,4 +1515,4 @@ function InventoryAPI.updateCustomInventoryData(id, data, callback)
 	return respond(callback, false)
 end
 
-exports("updateCustomInventoryData", InventoryAPI.updateCustomInventoryData)
+exports('updateCustomInventoryData', InventoryAPI.updateCustomInventoryData)
