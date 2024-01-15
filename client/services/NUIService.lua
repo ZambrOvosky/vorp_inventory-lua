@@ -51,7 +51,10 @@ function NUIService.ReloadInventory(inventory)
 				serial_number = item.serial_number
 			end
 			if item.custom_desc then
-				custom_desc = item.custom_desc .. '<br>' .. T.serialnumber .. serial_number
+				local serial_number_str = "<br><br>" .. T.serialnumber .. serial_number
+				if not string.find(item.custom_desc, serial_number_str, 1, true) then
+					custom_desc = item.custom_desc .. "<br><br>" .. T.serialnumber .. serial_number
+				end
 			end
 
 			if item.desc and custom_desc then
@@ -59,7 +62,8 @@ function NUIService.ReloadInventory(inventory)
 			end
 
 			if item.desc == nil then
-				item.desc = custom_desc or Utils.GetWeaponDesc(item.name) .. '<br>' .. T.serialnumber .. serial_number
+				item.desc = custom_desc or
+					Utils.GetWeaponDesc(item.name) .. "<br><br>" .. T.serialnumber .. serial_number
 			end
 		end
 	end
@@ -69,21 +73,20 @@ function NUIService.ReloadInventory(inventory)
 end
 
 function NUIService.OpenCustomInventory(name, id, capacity)
-	Core.RpcCall('vorp_inventory:Server:CanOpenCustom', function(result)
-		CanOpen = result
-		if CanOpen then
-			CanOpen = false
-			SetNuiFocus(true, true)
-			SendNUIMessage({
-				action = 'display',
-				type = 'custom',
-				title = tostring(name),
-				id = tostring(id),
-				capacity = capacity,
-			})
-			InInventory = true
-		end
-	end, id)
+	local result = Core.Callback.TriggerAwait("vorp_inventory:Server:CanOpenCustom", id)
+	CanOpen = result
+	if CanOpen then
+		CanOpen = false
+		SetNuiFocus(true, true)
+		SendNUIMessage({
+			action = "display",
+			type = "custom",
+			title = tostring(name),
+			id = tostring(id),
+			capacity = capacity
+		})
+		InInventory = true
+	end
 end
 
 function NUIService.NUIMoveToCustom(obj)
@@ -188,7 +191,8 @@ function NUIService.CloseInv()
 	TriggerEvent('vorp_stables:setClosedInv', false)
 	TriggerEvent('syn:closeinv')
 	if not Citizen.InvokeNative(0x0B7CB1300CBFE19C, PlayerPedId(), 1) then
-		TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'exit_satchel', 1.0, 1.0, -1, 30, 0, false, false, false) -- ANIMAÇÃO DE FECHAR INV
+		TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'exit_satchel', 1.0, 1.0, -1, 30, 0, false,
+			false, false) -- ANIMAÇÃO DE FECHAR INV
 	end
 	Wait(1000)
 	ClearPedTasks(PlayerPedId())
@@ -502,9 +506,8 @@ function NUIService.NUIGiveItem(obj)
 						if data2.type == 'item_money' then
 							if isProcessingPay then return end
 							isProcessingPay = true
-							TriggerServerEvent('vorpinventory:giveMoneyToPlayer', target, tonumber(data2.count))
-							--TriggerServerEvent("vorpinventory:moneylog", target, tonumber(data2.count))
-						elseif Config.UseGoldItem and data2.type == 'item_gold' then
+							TriggerServerEvent("vorpinventory:giveMoneyToPlayer", target, tonumber(data2.count))
+						elseif Config.UseGoldItem and data2.type == "item_gold" then
 							if isProcessingPay then return end
 							isProcessingPay = true
 							TriggerServerEvent('vorpinventory:giveGoldToPlayer', target, tonumber(data2.count))
@@ -733,7 +736,8 @@ function NUIService.LoadInv()
 					if item.name == v.name then
 						if item.metadata.description ~= nil then
 							item.metadata.orgdescription = item.metadata.description
-							item.metadata.description = item.metadata.description .. '<br><span style=color:Green;>' .. T.cansell .. v.price .. '</span>'
+							item.metadata.description = item.metadata.description ..
+								'<br><span style=color:Green;>' .. T.cansell .. v.price .. '</span>'
 						else
 							item.metadata.orgdescription = ''
 							item.metadata.description = '<span style=color:Green;>' .. T.cansell .. v.price .. '</span>'
@@ -779,7 +783,8 @@ end
 
 function NUIService.OpenInv(skipAnim)
 	if not Citizen.InvokeNative(0x0B7CB1300CBFE19C, PlayerPedId(), 1) or not skipAnim then
-		TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'enter', 1.0, 1.0, -1, 30, 0, false, false, false) -- ANIMAÇÃO DE ABRIR INV
+		TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'enter', 1.0, 1.0, -1, 30, 0, false, false,
+			false) -- ANIMAÇÃO DE ABRIR INV
 	end
 	-- PlaySoundFrontend("show_info", "Study_Sounds", true, 0) -- SOM AO ABRIR INVENTARIO
 	Wait(1000)
@@ -852,13 +857,17 @@ Citizen.CreateThread(function()
 
 	while true do
 		local sleep = 1000
-		if not InInventory and not IsPedDeadOrDying(PlayerPedId()) then
+		if IsControlJustReleased(1, Config.OpenKey) then
 			sleep = 0
-			if IsControlJustReleased(1, Config.OpenKey) then
+			if not IsPedDeadOrDying(PlayerPedId()) then
 				if InInventory then
 					NUIService.CloseInv()
 				else
 					NUIService.OpenInv()
+				end
+			else
+				if InInventory and IsControlJustReleased(1, Config.OpenKey) then
+					NUIService.CloseInv()
 				end
 			end
 		end

@@ -1059,11 +1059,12 @@ exports('createWeapon', InventoryAPI.registerWeapon)
 ---give weapon to target
 ---@param player number source
 ---@param weaponId number weapon id
----@param target number target id
+---@param target number | nil target id
 ---@param cb fun(success: boolean)? async or sync callback
 ---@return  boolean
 function InventoryAPI.giveWeapon(player, weaponId, target, cb)
 	local _source = player
+
 	if not Core.getUser(_source) then
 		return respond(cb, false)
 	end
@@ -1075,6 +1076,11 @@ function InventoryAPI.giveWeapon(player, weaponId, target, cb)
 	local userWeapons = UsersWeapons.default
 	local DefaultAmount = Config.MaxItemsInInventory.Weapons
 	local weapon = userWeapons[weaponId]
+
+	if not weapon then
+		return respond(cb, false)
+	end
+
 	local weaponName = weapon:getName()
 	local notListed = false
 
@@ -1123,11 +1129,13 @@ function InventoryAPI.giveWeapon(player, weaponId, target, cb)
 		}
 
 		DBService.updateAsync(query, params, function(r)
-			if not _target then
-				weapon:setSource(_target)
-				TriggerClientEvent('vorp:ShowAdvancedRightNotification', _target, T.youGaveWeapon, 'inventory_items',
-					weaponName, 'COLOR_PURE_WHITE', 4000)
-				TriggerClientEvent('vorpCoreClient:subWeapon', _target, weaponId)
+			if _target and _target > 0 then
+				if Core.getUser(_target) then
+					weapon:setSource(_target)
+					TriggerClientEvent('vorp:ShowAdvancedRightNotification', _target, T.youGaveWeapon, "inventory_items",
+						weaponName, "COLOR_PURE_WHITE", 4000)
+					TriggerClientEvent("vorpCoreClient:subWeapon", _target, weaponId)
+				end
 			end
 			TriggerClientEvent('vorp:ShowAdvancedRightNotification', _source, T.youReceivedWeapon, 'inventory_items',
 				weaponName, 'COLOR_PURE_WHITE', 4000)
@@ -1394,6 +1402,7 @@ exports('setCustomInventoryWeaponLimit', InventoryAPI.setCustomInventoryWeaponLi
 ---@param id string? inventory id
 function InventoryAPI.openInventory(player, id)
 	local _source = player
+
 	if not id then
 		return TriggerClientEvent('vorp_inventory:OpenInv', _source)
 	end
@@ -1423,7 +1432,7 @@ function InventoryAPI.openInventory(player, id)
 					canUse = dbItem.canUse,
 					canRemove = dbItem.canRemove,
 					createdAt = item.created_at,
-					owner = owner or item.character_id,
+					owner = item.character_id,
 					desc = dbItem.desc,
 					group = dbItem.group or 1,
 				})
@@ -1451,7 +1460,7 @@ function InventoryAPI.openInventory(player, id)
 			triggerAndReloadInventory()
 		else
 			DBService.GetInventory(charid, id, function(inventory)
-				UsersInventories[id][identifier] = createCharacterInventoryFromDB(inventory, identifier)
+				UsersInventories[id][identifier] = createCharacterInventoryFromDB(inventory)
 				triggerAndReloadInventory()
 			end)
 		end
