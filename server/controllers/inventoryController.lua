@@ -1,4 +1,4 @@
----@diagnostic disable: undefined-global
+
 -- Inventory Service Controller
 RegisterServerEvent("vorpinventory:getItemsTable", InventoryService.getItemsTable)
 RegisterServerEvent("vorpinventory:getInventory", InventoryService.getInventory)
@@ -6,10 +6,7 @@ RegisterServerEvent("vorpinventory:serverGiveItem", InventoryService.GiveItem)
 RegisterServerEvent("vorpinventory:serverGiveWeapon", InventoryService.GiveWeapon)
 RegisterServerEvent("vorpinventory:serverDropItem", InventoryService.DropItem)
 RegisterServerEvent("vorpinventory:serverDropMoney", InventoryService.DropMoney)
-RegisterServerEvent("vorpinventory:serverDropAllMoney", InventoryService.DropAllMoney)
-RegisterServerEvent("vorpinventory:serverDropPartMoney", InventoryService.DropPartMoney)
 RegisterServerEvent("vorpinventory:serverDropGold", InventoryService.DropGold)
-RegisterServerEvent("vorpinventory:serverDropAllGold", InventoryService.DropAllGold)
 RegisterServerEvent("vorpinventory:serverDropWeapon", InventoryService.DropWeapon)
 RegisterServerEvent("vorpinventory:sharePickupServerItem", InventoryService.sharePickupServerItem)
 RegisterServerEvent("vorpinventory:sharePickupServerWeapon", InventoryService.sharePickupServerWeapon)
@@ -26,8 +23,9 @@ RegisterServerEvent("vorp_inventory:useItem", InventoryService.UseItem)
 RegisterServerEvent("vorp_inventory:getNearbyCharacters", InventoryService.getNearbyCharacters)
 RegisterServerEvent("vorp_inventory:MoveToCustom", InventoryService.MoveToCustom)
 RegisterServerEvent("vorp_inventory:TakeFromCustom", InventoryService.TakeFromCustom)
+RegisterServerEvent("vorp_inventory:MoveToPlayer", InventoryService.MoveToPlayer)
+RegisterServerEvent("vorp_inventory:TakeFromPlayer", InventoryService.TakeFromPlayer)
 RegisterNetEvent("vorpinventory:servergiveammo", InventoryService.serverGiveAmmo)
-RegisterNetEvent("vorpinventory:getammoinfo", InventoryService.getAmmoInfo)
 RegisterServerEvent("vorpinventory:updateammo", InventoryService.updateAmmo)
 AddEventHandler("vorp_NewCharacter", InventoryService.onNewCharacter)
 

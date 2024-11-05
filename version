@@ -1,3 +1,86 @@
+<3.9>
+- fixed an issue with a query that was messing with shared custom inventories (this was added to attepmt to clean up the database)
+- added security check before removing items when players respawn to make sure the event can only be triggered if they are actually deprecated
+- fixed new export to get custom inventory count of items to return the proper value (an integer)
+- fixed new export to add items to custom inventory where metadata wasnt being added checked for nul values
+- fixed syn events, added security checks 
+- added new player timer to config refactored to use tables instead of arrays for faster look ups
+- added new exports for custom inventories remove weapons get weapons count add weapons 
+- added new exports to get all items and all weapons from custom inventory without sepcifying the items or weapons name
+- added new exports update items in custom inventories, their amount and metadata remove items by item id, remove weapons by id 
+- added new exports to clear all items or weapons from custom inventories
+- added new statebag IsInvOpen to detect if the inventory is open or closed and an event has also been added to detect when the inventory is open or closed client side only che check docs
+- added image preload cache feature to ensure images are loaded only once and added a default image incase image doesnt exist
+- removed serial number from descriptions since its already displaying on the tool tip
+- removed items/weapons drop on death feature (this was causing crashes when you had many items, wasnt also working  unless youwere in area and contributes to net obj pool)
+- added to config to decide what shows first between weapons or items 
+- added missing translations 
+- refactor and optimised ammo look ups by adding tables and removing arrays for faster look ups (fixes hatchet ammo was in wrong group)
+- refactor and optimised weapon look ups by adding tables and removed arrays for faster look ups
+- added exports for getting items to the client side for displaying and doing light checks 
+- other minor fixes and improvements were done as well 
+- make sure to update all files and fxmanifest   
+<3.8>
+- new exports for custom inventories using char id permissions just like jobs
+- new feature to pass image variable with item name for metadata to display different images
+- new exports for custom inventories add/get items
+- added to  export registerCustomInventory webhook variable that can contain url link for logs of each custom inv
+- export registerCustomInventory now returns with an object including methods getters and setters.
+- updated types for exports
+- fix canCarryWeapons not counting with ammount requested because of the new weight feature
+- fix missing method for setLabel on weapons
+- fix OnItemCreated missing event in GiveItem function
+- fix not saving ammo when its empty in the database
+- refactor some code for optimisation like jobs look up
+- fix dialog window would stay open if users disconnect internet to dupe.
+- make sure to update fxmanifest and all other files.
+<3.7>
+- added msgpack send to items to client to reduce load 
+- added new exports for client side mostly for weapons see client/exports.lua
+- added item names to tables items_crafted and characters_inventories for easier look up (you must run the sql code provived in the discord or commits)
+- fixed getAmmo there was a typo
+- fixed GiveWeapon wasnt properly checking the weight
+- added a check to make sure weapons name are valid when given
+- fixed canCarryWeapons when  using names wasnt returning the proper value
+- added some strings to translation regarding the last changes about weight
+- added some native declararations since they are not on release version
+- fixed exports add weapons desc label and serial number that were not synced in client
+- updated types for exports
+- added server side export getUserAmmo will return ammo that is cached on the server
+- fixed openPlayerInv only allowing to open once
+- fixed non shared inventories would not remove items from custom containers when it was set to not be shared
+- make sure to update all files remove old back up and add new DO NOT REPLACE
+<3.6>
+- inventory weight based 
+- weapons now count towards inventory weight
+- UI changes 
+- see weapons used marked
+- added new file to make item groups easily
+- fixed permissions for secondary inventories
+- deprecated canCarryItems
+- WIP items decay, is only for display at the moment (coming on next updates)
+- new export to openPlayerInventories
+- new export client side to use weapon without having to open inventory
+- new event listeners (check documentation) and extra parameters added to current ones
+- this update requires database changes and vorp_core to be updated
+- function to clean up items_crafted
+- canCarryWeapons extra param now supports weapon name or hash
+<3.5>
+- exploit fixed when using devtools to insert items to custom inventories
+- added ItemOnUse event hook ( useful when you dont have acces to a script)
+- added statebag for getting current serial number of a weapon
+- other minor improvements and optimisation
+- added feature to drag and press shift to move all items to custom inventories or main
+<3.4>
+- small fixes were added to this version
+- item hook to use in your scripts
+- added rol to show in inventory
+- drop item without input if qty is 1
+- event to lock unlock player inventory
+- lock inventory if player is cuffed or hogtied
+- fix showing translation to weapons that dont have serial numbers in second inventories
+- detection of player is offline will close inventory.
+- make sure to update all files.
 <3.3>
  - fixed items with metadata being removed and then addd back on relog
  - added some error handling for some functions
