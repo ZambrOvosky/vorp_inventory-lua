@@ -32,8 +32,8 @@ end)
 
 function ApplyPosfx()
 	if Config.UseFilter then
-		AnimpostfxPlay("OJDominoBlur")
-		AnimpostfxSetStrength("OJDominoBlur", 0.5)
+		AnimpostfxPlay('OJDominoBlur')
+		AnimpostfxSetStrength('OJDominoBlur', 0.5)
 	end
 end
 
@@ -44,7 +44,7 @@ function NUIService.ReloadInventory(inventory)
 	end
 
 	for _, item in pairs(payload.itemList) do
-		if item.type == "item_weapon" then
+		if item.type == 'item_weapon' then
 			item.label = item.custom_label or Utils.GetWeaponDefaultLabel(item.name)
 
 			if item.desc and item.custom_desc then
@@ -64,7 +64,7 @@ function NUIService.ReloadInventory(inventory)
 end
 
 function NUIService.OpenCustomInventory(name, id, capacity, weight)
-	CanOpen = Core.Callback.TriggerAwait("vorp_inventory:Server:CanOpenCustom", id)
+	CanOpen = Core.Callback.TriggerAwait('vorp_inventory:Server:CanOpenCustom', id)
 	if not CanOpen then return end
 
 	ApplyPosfx()
@@ -72,8 +72,8 @@ function NUIService.OpenCustomInventory(name, id, capacity, weight)
 	CanOpen = false
 	SetNuiFocus(true, true)
 	SendNUIMessage({
-		action = "display",
-		type = "custom",
+		action = 'display',
+		type = 'custom',
 		title = tostring(name),
 		id = tostring(id),
 		capacity = capacity,
@@ -91,7 +91,7 @@ function NUIService.NUITakeFromCustom(obj)
 end
 
 function NUIService.OpenPlayerInventory(name, id)
-	CanOpen = Core.Callback.TriggerAwait("vorp_inventory:Server:CanOpenCustom", id)
+	CanOpen = Core.Callback.TriggerAwait('vorp_inventory:Server:CanOpenCustom', id)
 	if not CanOpen then return end
 
 	CanOpen = false
@@ -99,8 +99,8 @@ function NUIService.OpenPlayerInventory(name, id)
 	DisplayRadar(false)
 	SetNuiFocus(true, true)
 	SendNUIMessage({
-		action = "display",
-		type = "player",
+		action = 'display',
+		type = 'player',
 		title = name,
 		id = id,
 	})
@@ -108,16 +108,16 @@ function NUIService.OpenPlayerInventory(name, id)
 end
 
 function NUIService.NUIMoveToPlayer(obj)
-	TriggerServerEvent("vorp_inventory:MoveToPlayer", json.encode(obj))
+	TriggerServerEvent('vorp_inventory:MoveToPlayer', json.encode(obj))
 end
 
 function NUIService.NUITakeFromPlayer(obj)
-	TriggerServerEvent("vorp_inventory:TakeFromPlayer", json.encode(obj))
+	TriggerServerEvent('vorp_inventory:TakeFromPlayer', json.encode(obj))
 end
 
 function NUIService.CloseInv()
 	if Config.UseFilter then
-		AnimpostfxStop("OJDominoBlur")
+		AnimpostfxStop('OJDominoBlur')
 	end
 	if StoreSynMenu then
 		StoreSynMenu = false
@@ -143,12 +143,14 @@ function NUIService.CloseInv()
 	InInventory = false
 	TriggerEvent('vorp_stables:setClosedInv', false)
 	TriggerEvent('syn:closeinv')
-	if not Citizen.InvokeNative(0x0B7CB1300CBFE19C, PlayerPedId(), 1) then
-		TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'exit_satchel', 1.0, 1.0, -1, 30, 0, false,
-			false, false) -- ANIMAÇÃO DE FECHAR INV
-	end
-	Wait(1000)
-	ClearPedTasks(PlayerPedId())
+	CreateThread(function()
+		if not Citizen.InvokeNative(0x0B7CB1300CBFE19C, PlayerPedId(), 1) then
+			TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'exit_satchel', 1.0, 1.0, -1, 30, 0, false,
+				false, false) -- ANIMAÇÃO DE FECHAR INV
+		end
+		Wait(1000)
+		ClearPedTasks(PlayerPedId())
+	end)
 end
 
 function NUIService.setProcessingPayFalse()
@@ -305,8 +307,8 @@ function NUIService.NUIGiveItem(obj)
 				if data2.type == 'item_money' then
 					if isProcessingPay then return end
 					isProcessingPay = true
-					TriggerServerEvent("vorpinventory:giveMoneyToPlayer", target, tonumber(data2.count))
-				elseif Config.UseGoldItem and data2.type == "item_gold" then
+					TriggerServerEvent('vorpinventory:giveMoneyToPlayer', target, tonumber(data2.count))
+				elseif Config.UseGoldItem and data2.type == 'item_gold' then
 					if isProcessingPay then return end
 					isProcessingPay = true
 					TriggerServerEvent('vorpinventory:giveGoldToPlayer', target, tonumber(data2.count))
@@ -449,12 +451,12 @@ local function addWardrobeInventoryItem(itemName, slotHash)
 end
 
 local function useWeapon(data)
-	data.type = data.type or "item_weapon"
+	data.type = data.type or 'item_weapon'
 	local ped = PlayerPedId()
 	local _, weaponHash = GetCurrentPedWeapon(ped, false, 0, false)
 	local weaponId = tonumber(data.id)
 	if weaponId and not UserWeapons[weaponId] then
-		return print("Weapon not found")
+		return print('Weapon not found')
 	end
 	local weapName = joaat(UserWeapons[weaponId]:getName())
 	local isWeaponAGun = Citizen.InvokeNative(0x705BE297EEBDB95D, weapName)
@@ -463,8 +465,8 @@ local function useWeapon(data)
 	local notdual = false
 
 	if (isWeaponAGun and isWeaponOneHanded) and isArmed then
-		addWardrobeInventoryItem("CLOTHING_ITEM_M_OFFHAND_000_TINT_004", 0xF20B6B4A)
-		addWardrobeInventoryItem("UPGRADE_OFFHAND_HOLSTER", 0x39E57B01)
+		addWardrobeInventoryItem('CLOTHING_ITEM_M_OFFHAND_000_TINT_004', 0xF20B6B4A)
+		addWardrobeInventoryItem('UPGRADE_OFFHAND_HOLSTER', 0x39E57B01)
 		UserWeapons[weaponId]:setUsed2(true)
 		if weaponHash == weapName then
 			UserWeapons[weaponId]:equipwep(true)
@@ -473,7 +475,7 @@ local function useWeapon(data)
 		end
 		UserWeapons[weaponId]:loadComponents()
 		UserWeapons[weaponId]:setUsed(true)
-		TriggerServerEvent("syn_weapons:weaponused", data)
+		TriggerServerEvent('syn_weapons:weaponused', data)
 	elseif not UserWeapons[weaponId]:getUsed() and not Citizen.InvokeNative(0x8DECB02F88F428BC, ped, weapName, 0, true) or Citizen.InvokeNative(0x30E7C16B12DA8211, weapName) then
 		notdual = true
 	end
@@ -482,22 +484,22 @@ local function useWeapon(data)
 		UserWeapons[weaponId]:equipwep()
 		UserWeapons[weaponId]:loadComponents()
 		UserWeapons[weaponId]:setUsed(true)
-		TriggerServerEvent("syn_weapons:weaponused", data)
+		TriggerServerEvent('syn_weapons:weaponused', data)
 	end
 	if UserWeapons[weaponId]:getUsed() then
 		local serial = UserWeapons[weaponId]:getSerialNumber()
 		local info = { weaponId = weaponId, serialNumber = serial }
-		local key = string.format("GetEquippedWeaponData_%d", weapName)
+		local key = string.format('GetEquippedWeaponData_%d', weapName)
 		LocalPlayer.state:set(key, info, false)
 	end
 	NUIService.LoadInv()
 end
 
-exports("useWeapon", useWeapon)
+exports('useWeapon', useWeapon)
 
 local function useItem(data)
 	if timerUse <= 0 then
-		TriggerServerEvent("vorp_inventory:useItem", data)
+		TriggerServerEvent('vorp_inventory:useItem', data)
 		timerUse = 2000
 	else
 		Core.NotifyRightTip(T.slow, 5000)
@@ -505,14 +507,14 @@ local function useItem(data)
 end
 
 function NUIService.NUIUseItem(data)
-	if data.type == "item_standard" then
+	if data.type == 'item_standard' then
 		useItem(data)
-	elseif data.type == "item_weapon" then
+	elseif data.type == 'item_weapon' then
 		useWeapon(data)
 	end
 end
 
-exports("useItem", useItem) -- not tested yet
+exports('useItem', useItem) -- not tested yet
 
 
 function NUIService.NUISound()
@@ -521,10 +523,10 @@ end
 
 function NUIService.NUIFocusOff()
 	if Config.UseFilter then
-		AnimpostfxStop("OJDominoBlur")
+		AnimpostfxStop('OJDominoBlur')
 	end
 	DisplayRadar(true)
-	PlaySoundFrontend("SELECT", "RDRO_Character_Creator_Sounds", true, 0)
+	PlaySoundFrontend('SELECT', 'RDRO_Character_Creator_Sounds', true, 0)
 	NUIService.CloseInv()
 end
 
@@ -602,7 +604,7 @@ local function loadItemsAndWeapons()
 	local weapons = loadWeapons()
 
 	-- merged items with weapons
-	if Config.InventoryOrder == "items" then
+	if Config.InventoryOrder == 'items' then
 		for _, item in pairs(items) do
 			table.insert(itemsToSend, item)
 		end
@@ -624,10 +626,10 @@ end
 function NUIService.LoadInv()
 	local payload = {}
 
-	Core.Callback.TriggerAsync("vorpinventory:get_slots", function(result)
-		SendNUIMessage({ action = "changecheck", check = string.format("%.1f", result.totalInvWeight), info = string.format("%.1f", result.slots) })
+	Core.Callback.TriggerAsync('vorpinventory:get_slots', function(result)
+		SendNUIMessage({ action = 'changecheck', check = string.format('%.1f', result.totalInvWeight), info = string.format('%.1f', result.slots) })
 		SendNUIMessage({
-			action = "updateStatusHud",
+			action = 'updateStatusHud',
 			show   = not IsRadarHidden(),
 			money  = result.money,
 			gold   = result.gold,
@@ -637,24 +639,25 @@ function NUIService.LoadInv()
 	end)
 
 	local itemsAndWeapons = loadItemsAndWeapons()
-	payload.action = "setItems"
+	payload.action = 'setItems'
 	payload.itemList = itemsAndWeapons
 
 	SendNUIMessage(payload)
 end
 
 function NUIService.OpenInv(skipAnim)
-	if not Citizen.InvokeNative(0x0B7CB1300CBFE19C, PlayerPedId(), 1) or not skipAnim then
-		TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'enter', 1.0, 1.0, -1, 30, 0, false, false,
-			false) -- ANIMAÇÃO DE ABRIR INV
-	end
-	-- PlaySoundFrontend("show_info", "Study_Sounds", true, 0) -- SOM AO ABRIR INVENTARIO
-	Wait(1000)
-	ClearPedTasks(PlayerPedId())
+	CreateThread(function()
+		if not Citizen.InvokeNative(0x0B7CB1300CBFE19C, PlayerPedId(), 1) or not skipAnim then
+			TaskPlayAnim(PlayerPedId(), 'mech_inspection@generic@lh@satchel', 'enter', 1.0, 1.0, -1, 30, 0, false, false,
+				false) -- ANIMAÇÃO DE ABRIR INV
+		end
+		Wait(1000)
+		ClearPedTasks(PlayerPedId())
+	end)
 
 	ApplyPosfx()
 	DisplayRadar(false)
-	PlaySoundFrontend("SELECT", "RDRO_Character_Creator_Sounds", true, 0)
+	PlaySoundFrontend('SELECT', 'RDRO_Character_Creator_Sounds', true, 0)
 	SetNuiFocus(true, true)
 	SendNUIMessage({
 		action = 'display',
@@ -705,7 +708,7 @@ function NUIService.initiateData()
 			use = T.use,
 			give = T.give,
 			drop = T.drop,
-			labels = T.labels
+			labels = T.labels,
 		},
 		config = {
 			UseGoldItem = Config.UseGoldItem,
@@ -714,15 +717,15 @@ function NUIService.initiateData()
 			AddAmmoItem = Config.AddAmmoItem,
 			DoubleClickToUse = Config.DoubleClickToUse,
 			UseRolItem = Config.UseRolItem,
-			WeightMeasure = Config.WeightMeasure or "Kg",
-		}
+			WeightMeasure = Config.WeightMeasure or 'Kg',
+		},
 	})
 end
 
 -- Main loop
 CreateThread(function()
 	local controlVar = false                     -- best to use variable than to check statebag every frame
-	LocalPlayer.state:set("IsInvOpen", false, true) -- init
+	LocalPlayer.state:set('IsInvOpen', false, true) -- init
 	repeat Wait(2000) until LocalPlayer.state.IsInSession
 	NUIService.initiateData()
 
@@ -749,14 +752,14 @@ CreateThread(function()
 		if InInventory then
 			if not controlVar then
 				controlVar = true
-				LocalPlayer.state:set("IsInvActive", true, true) -- can also listen for statebag change
-				TriggerEvent("vorp_inventory:Client:OnInvStateChange", true)
+				LocalPlayer.state:set('IsInvActive', true, true) -- can also listen for statebag change
+				TriggerEvent('vorp_inventory:Client:OnInvStateChange', true)
 			end
 		else
 			if controlVar then
 				controlVar = false
-				LocalPlayer.state:set("IsInvActive", false, true)
-				TriggerEvent("vorp_inventory:Client:OnInvStateChange", false)
+				LocalPlayer.state:set('IsInvActive', false, true)
+				TriggerEvent('vorp_inventory:Client:OnInvStateChange', false)
 			end
 		end
 
@@ -791,5 +794,5 @@ end
 
 function NUIService.CacheImages(info)
 	local unpack = msgpack.unpack(info)
-	SendNUIMessage({ action = "cacheImages", info = unpack })
+	SendNUIMessage({ action = 'cacheImages', info = unpack })
 end

@@ -193,7 +193,7 @@ TranslationInv.Langs = {
         slow                      = "Aguara unsa segundos!",
         gave                      = "Deu Dinheiro",
         withid                    = " com o ID da arma: ",
-        serialnumber              = "Número de série: ",
+        serialnumber              = "Núm. de série: ",
         gold                      = "Gold",
         money                     = "Money ($",
         itemBlackListed           = "Item está na lista negra",
@@ -236,7 +236,7 @@ TranslationInv.Langs = {
         --Web hook Language
         WebHookLang = {
 
-            serialnumber = "Número de Série:",
+            serialnumber = "Núm. de Série:",
             dropedwep    = "Este jogador largou esta arma",
             gavewep      = "Deu arma",
             Weapontype   = "Tipo de arma",
@@ -326,7 +326,7 @@ TranslationInv.Langs = {
         noplayersnearby           = "Nenhum jogador por perto",
         gaveMoney                 = "Deu dinheiro",
         withid                    = " com o ID da arma: ",
-        serialnumber              = "Número de série: ",
+        serialnumber              = "Núm. de série: ",
         gold                      = "Gold",
         money                     = "Money ($",
         itemBlackListed           = "Item está na lista negra",
@@ -359,7 +359,7 @@ TranslationInv.Langs = {
 
         labels                    = {
             weight = "Peso ",
-            serial = "Número de Série ",
+            serial = "Núm. de Série ",
             ammo = "Munição ",
             limit = "Limite ",
             decay = "Decadência ",
@@ -368,7 +368,7 @@ TranslationInv.Langs = {
 
 		WebHookLang = {
 
-            serialnumber = "Número de Série:",
+            serialnumber = "Núm. de Série:",
             dropedwep    = "Este jogador largou esta arma",
             gavewep      = "Deu a arma",
             Weapontype   = "Tipo de arma",
@@ -454,7 +454,7 @@ TranslationInv.Langs = {
         slow                      = "Arrêtez d'essayer de spammer des items!",
         gave                      = "Gave money",
         withid                    = " avec l'ID de l'arme: ",
-        serialnumber              = "Numéro de série: ",
+        serialnumber              = "Num. de série: ",
         gold                      = "Gold",
         money                     = "Money ($",
         itemBlackListed           = "L'objet est sur liste noire",
@@ -497,7 +497,7 @@ TranslationInv.Langs = {
 		WebHookLang = {
 
 
-            serialnumber = "Número de Série:",
+            serialnumber = "Núm. de Série:",
             dropedwep    = "Este jogador largou esta arma",
             gavewep      = "Deu arma",
             Weapontype   = "Tipo de arma",
@@ -709,7 +709,7 @@ TranslationInv.Langs = {
         cansell                   = "Se puede vender por: $",
         gave                      = "Gave money",
         withid                    = " con el ID de arma: ",
-        serialnumber              = "Número de serie: ",
+        serialnumber              = "Núm. de serie: ",
         gold                      = "Gold",
         money                     = "Money ($",
         itemBlackListed           = "El artículo está en la lista negra",

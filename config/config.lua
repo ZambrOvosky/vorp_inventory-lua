@@ -4,7 +4,7 @@ Config = {
 	--======================= DEVELOPMENT ==============================--
 	Debug                    = false, -- if your server is live set this to false.  to true only if you are testing things
 
-	InventoryOrder           = "items", -- items or weapons what should should first in inventory
+	InventoryOrder           = 'items', -- items or weapons what should should first in inventory
 
 	DevMode                  = false, -- if your server is live set this to false.  to true only if you are testing things (auto load inventory when script restart and before character selection. Alos add /getInv command)
 	dbupdater                = true,
@@ -35,7 +35,7 @@ Config = {
 	DisableDeathInventory    = true,    -- prevent the ability to access inventory while dead
 
 	OpenKey                  = 0xC1989F95, -- I
-	UseFilter                = true,    -- if true then will use the filter opening inventory
+	UseFilter                = false,   -- if true then will use the filter opening inventory
 
 	PickupKey                = 0xF84FA74F, --RMB mouse PROMPT PICKUP
 
@@ -45,7 +45,7 @@ Config = {
 
 	UseLanternPutOnBelt      = true,    -- if true then lanterns will be put on belt
 
-	WeightMeasure            = "kg",    -- Weight measure (kg, lbs, etc)
+	WeightMeasure            = 'kg',    -- Weight measure (kg, lbs, etc)
 
 	-- =================== CLEAR ITEMS WEAPONS MONEY GOLD =====================--
 
@@ -115,7 +115,7 @@ Config = {
 	nonAmmoThrowables        = {
 		WEAPON_MELEE_CLEAVER = true,
 		WEAPON_MELEE_HATCHET = true,
-		WEAPON_MELEE_HATCHET_HUNTER = true
+		WEAPON_MELEE_HATCHET_HUNTER = true,
 	},
 	-- weapons that dont need serial numbers
 	noSerialNumber           = {
@@ -137,5 +137,5 @@ Config = {
 		WEAPON_BOW_IMPROVED = true,
 		WEAPON_LASSO = true,
 		WEAPON_LASSO_REINFORCED = true,
-	}
+	},
 }
