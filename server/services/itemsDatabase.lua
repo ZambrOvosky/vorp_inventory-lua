@@ -1,22 +1,20 @@
----@type table<string, Item> contains Database Server items
-ServerItems = {}
----@type table<string, table<number, Weapon>> contain users weapons
+local Core   = exports.vorp_core:GetCore()
+ServerItems  = {}
 UsersWeapons = { default = {} }
 
+-- temporary just to assing serial numbers to old weapons and labels will be removed eventually
 MySQL.ready(function()
-	DBService.queryAsync('SELECT * FROM loadout', {},
+	DBService.queryAsync('SELECT name,id,label,serial_number FROM loadout', {},
 		function(result)
 			if next(result) then
 				for _, db_weapon in pairs(result) do
 					local label = db_weapon.label or SvUtils.GenerateWeaponLabel(db_weapon.name)
 					local serialNumber = db_weapon.serial_number or SvUtils.GenerateSerialNumber(db_weapon.name)
 					if not db_weapon.serial_number then
-						DBService.updateAsync('UPDATE loadout SET serial_number = @serial_number WHERE id = @id',
-							{ id = db_weapon.id, serial_number = serialNumber }, function() end)
+						DBService.updateAsync('UPDATE loadout SET serial_number = @serial_number WHERE id = @id', { id = db_weapon.id, serial_number = serialNumber }, function() end)
 					end
 					if not db_weapon.label then
-						DBService.updateAsync('UPDATE loadout SET label = @label WHERE id = @id',
-							{ id = db_weapon.id, label = label }, function() end)
+						DBService.updateAsync('UPDATE loadout SET label = @label WHERE id = @id', { id = db_weapon.id, label = label }, function() end)
 					end
 				end
 			end
@@ -32,6 +30,7 @@ local function loadAllWeapons(db_weapon)
 
 	if db_weapon.dropped == 0 then
 		local label = db_weapon.custom_label or db_weapon.label
+		local weight = SvUtils.GetWeaponWeight(db_weapon.name)
 		local weapon = Weapon:New({
 			id = db_weapon.id,
 			propietary = db_weapon.identifier,
@@ -48,6 +47,7 @@ local function loadAllWeapons(db_weapon)
 			serial_number = db_weapon.serial_number,
 			custom_label = db_weapon.custom_label,
 			custom_desc = db_weapon.custom_desc,
+			weight = weight,
 		})
 
 		if not UsersWeapons[db_weapon.curr_inv] then
@@ -82,7 +82,7 @@ end
 
 
 MySQL.ready(function()
-	-- load all items from databse
+	-- load all items from database
 	DBService.queryAsync("SELECT * FROM items", {}, function(result)
 		for _, db_item in pairs(result) do
 			if db_item.id then
@@ -96,14 +96,15 @@ MySQL.ready(function()
 					canUse = db_item.usable,
 					canRemove = db_item.can_remove,
 					desc = db_item.desc,
-					group = db_item.groupId or 1
+					group = db_item.groupId or 1,
+					weight = db_item.weight or 0.25,
 				})
 				ServerItems[item.item] = item
 			end
 		end
 	end)
 
-	--load all secondary weapons from database
+	--load all secondary inventory weapons from database
 	DBService.queryAsync("SELECT * FROM loadout", {}, function(result)
 		for _, db_weapon in pairs(result) do
 			if db_weapon.curr_inv ~= "default" then
@@ -113,8 +114,18 @@ MySQL.ready(function()
 	end)
 end)
 
+
 -- on player select character event
-RegisterNetEvent("vorp:SelectedCharacter", loadPlayerWeapons)
+AddEventHandler("vorp:SelectedCharacter", function(source, char)
+	loadPlayerWeapons(source, char)
+
+	local newtable = {}
+	for k, v in pairs(ServerItems) do
+		newtable[k] = v.item
+	end
+	local packed = msgpack.pack(newtable)
+	TriggerClientEvent("vorp_inventory:server:CacheImages", source, packed)
+end)
 
 -- reload on script restart
 if Config.DevMode then
@@ -122,5 +133,12 @@ if Config.DevMode then
 		local _source = source
 		local character = Core.getUser(_source).getUsedCharacter
 		loadPlayerWeapons(_source, character)
+
+		local newtable = {}
+		for k, v in pairs(ServerItems) do
+			newtable[k] = v.item
+		end
+		local packed = msgpack.pack(newtable)
+		TriggerClientEvent("vorp_inventory:server:CacheImages", source, packed)
 	end)
 end

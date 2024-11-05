@@ -4,13 +4,14 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 
 game 'rdr3'
 author 'VORP'
-repository 'https://github.com/VORPCORE/vorp_inventory-lua'
+name 'vorp inventory'
 description 'Inventory System for RedM VORPCore framework'
 
 lua54 'yes'
 
 shared_scripts {
   "config/config.lua",
+  "config/groups.lua",
   "config/weapons.lua",
   "config/ammo.lua",
   "config/logs.lua",
@@ -22,6 +23,7 @@ shared_scripts {
 }
 
 client_scripts {
+  'client/exports.lua',
   'client/client.lua',
   'client/models/*.lua',
   'client/services/*.lua',
@@ -30,12 +32,13 @@ client_scripts {
 }
 
 server_scripts {
+
   '@oxmysql/lib/MySQL.lua',
+  'server/vorpInventoryApi.lua',
   'server/server.lua',
   'server/models/*.lua',
   'server/services/*.lua',
   'server/controllers/*.lua',
-  'vorpInventoryApi.lua',
   'server/respawn.lua',
 
 }
@@ -43,10 +46,11 @@ server_scripts {
 files { 'html/**/*' }
 ui_page 'html/ui.html'
 
+---@deprecated
 server_exports { 'vorp_inventoryApi' }
 
 -- version
-version '3.3'
+version '3.9'
 vorp_checker 'yes'
 vorp_name '^4Resource version Check^3'
 vorp_github 'https://github.com/VORPCORE/vorp_inventory-lua'

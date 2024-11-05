@@ -1,26 +1,3 @@
----@diagnostic disable: undefined-global
-T = TranslationInv.Langs[Lang]
-Core = exports.vorp_core:GetCore()
-
-
-RegisterNetEvent('syn:getnuistuff')
-AddEventHandler('syn:getnuistuff', function(x, y, mon, gol)
-    local nuistuff = x
-    local player = PlayerPedId()
-    SendNUIMessage({
-        action = "changecheck",
-        check = nuistuff,
-        info = y,
-    })
-    SendNUIMessage({
-        action = "updateStatusHud",
-        show   = not IsRadarHidden(),
-        money  = mon,
-        gold   = gol,
-        id     = GetPlayerServerId(NetworkGetEntityOwner(player)),
-    })
-end)
-
 if Config.DevMode then
     AddEventHandler('onClientResourceStart', function(resourceName)
         if (GetCurrentResourceName() ~= resourceName) then
@@ -34,24 +11,43 @@ if Config.DevMode then
         TriggerServerEvent("vorpinventory:getItemsTable")
         Wait(1000)
         TriggerServerEvent("vorpinventory:getInventory")
-        Wait(2000)
+        Wait(1000)
         TriggerServerEvent("vorpCore:LoadAllAmmo")
         print("inventory loaded")
         Wait(100)
         TriggerEvent("vorpinventory:loaded")
-        InvLoaded = true
     end)
 end
 
--- DISABLE INVENTORY OPENING KEY
-Citizen.CreateThread(function()
-    repeat
-        Wait(0)
-        if not InvLoaded then
-            DisableControlAction(0, 0xC1989F95, true)
-        else
-            DisableControlAction(0, 0xC1989F95, false)
-            return
+
+CreateThread(function()
+    if not Config.UseLanternPutOnBelt then
+        return
+    end
+
+    repeat Wait(2000) until LocalPlayer.state.IsInSession
+
+    local function checkLanterns(hash)
+        local lanterns <const> = { "WEAPON_MELEE_LANTERN", "WEAPON_MELEE_LANTERN_HALLOWEEN", "WEAPON_MELEE_DAVY_LANTERN", "WEAPON_MELEE_LANTERN_ELECTRIC" }
+        for i = 1, #lanterns do
+            if hash == joaat(lanterns[i]) then
+                return true
+            end
         end
-    until false
+        return false
+    end
+    local lastLantern = 0
+    while true do
+        local weaponHeld = GetPedCurrentHeldWeapon(PlayerPedId())
+        local isLantern = IsWeaponLantern(weaponHeld) == 1 or IsWeaponLantern(weaponHeld) == true
+        if isLantern then
+            lastLantern = weaponHeld
+        end
+
+        if lastLantern ~= 0 and not checkLanterns(weaponHeld) then
+            SetCurrentPedWeapon(PlayerPedId(), lastLantern, true, 12, false, false)
+            lastLantern = 0
+        end
+        Wait(1000)
+    end
 end)

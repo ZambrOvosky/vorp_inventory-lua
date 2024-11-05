@@ -9,7 +9,10 @@ RegisterNUICallback('GetNearPlayers', NUIService.NUISelectPlayer)
 RegisterNUICallback('UnequipWeapon', NUIService.NUIUnequipWeapon)
 RegisterNUICallback('TakeFromCustom', NUIService.NUITakeFromCustom)
 RegisterNUICallback('MoveToCustom', NUIService.NUIMoveToCustom)
-RegisterNUICallback('ChangeClothing', NUIService.ChangeClothing)
+RegisterNUICallback("ChangeClothing", NUIService.ChangeClothing)
+RegisterNUICallback("TakeFromPlayer", NUIService.NUITakeFromPlayer)
+RegisterNUICallback("MoveToPlayer", NUIService.NUIMoveToPlayer)
+RegisterNUICallback('getActionsConfig', NUIService.getActionsConfig)
 --========================================================================--
 
 -- NPlayerSelector
@@ -17,19 +20,22 @@ RegisterNetEvent('vorp_inventory:GiveItemNPlayer')
 AddEventHandler('vorp_inventory:GiveItemNPlayer', NUIService.NUIGiveItemNPlayer)
 
 -- shared
-RegisterNetEvent('vorp_inventory:CloseInv')
-AddEventHandler('vorp_inventory:CloseInv', NUIService.CloseInventory)
+RegisterNetEvent("vorp_inventory:CloseInv")
+AddEventHandler("vorp_inventory:CloseInv", NUIService.CloseInv)
 
+-- client
+AddEventHandler("vorp_inventory:Client:DisableInventory", NUIService.DisableInventory)
 -- server
-RegisterNetEvent('vorp_inventory:ProcessingReady', NUIService.setProcessingPayFalse)
-RegisterNetEvent('vorp_inventory:OpenInv', NUIService.OpenInv)
-RegisterNetEvent('vorp_inventory:setNearbyCharacters', NUIService.NUISetNearPlayers)
-RegisterNetEvent('vorp_inventory:OpenCustomInv', NUIService.OpenCustomInventory)
-RegisterNetEvent('vorp_inventory:CloseCustomInv', NUIService.CloseInv)
-RegisterNetEvent('vorp_inventory:ReloadCustomInventory', NUIService.ReloadInventory)
-RegisterNetEvent('vorp_inventory:transactionStarted', NUIService.TransactionStarted)
-RegisterNetEvent('vorp_inventory:transactionCompleted', NUIService.TransactionComplete)
-
+RegisterNetEvent("vorp_inventory:ProcessingReady", NUIService.setProcessingPayFalse)
+RegisterNetEvent("vorp_inventory:OpenInv", NUIService.OpenInv)
+RegisterNetEvent("vorp_inventory:setNearbyCharacters", NUIService.NUISetNearPlayers)
+RegisterNetEvent("vorp_inventory:OpenCustomInv", NUIService.OpenCustomInventory)
+RegisterNetEvent("vorp_inventory:CloseCustomInv", NUIService.CloseInv)
+RegisterNetEvent("vorp_inventory:ReloadCustomInventory", NUIService.ReloadInventory)
+RegisterNetEvent("vorp_inventory:transactionStarted", NUIService.TransactionStarted)
+RegisterNetEvent("vorp_inventory:transactionCompleted", NUIService.TransactionComplete)
+RegisterNetEvent("vorp_inventory:OpenPlayerInventory", NUIService.OpenPlayerInventory)
+RegisterNetEvent("vorp_inventory:server:CacheImages", NUIService.CacheImages)
 -- SYN SCRIPT EVENTS
 -- Store Module
 RegisterNetEvent('vorp_inventory:OpenStoreInventory')
